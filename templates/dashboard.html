@@ -48,18 +48,18 @@
           <div class="row align-items-center">
             <div class="col-md-3 text-center text-md-start mb-3 mb-md-0">
               <h5 class="text-muted">Monthly Budget</h5>
-              <h2 class="mb-0">${{ "%.2f"|format(budget_status.budget) }}</h2>
+              <h2 class="mb-0">₹{{ "%.2f"|format(budget_status.budget) }}</h2>
             </div>
             <div class="col-md-3 text-center mb-3 mb-md-0">
               <h5 class="text-muted">Total Expenses</h5>
-              <h2 class="mb-0">${{ "%.2f"|format(budget_status.total) }}</h2>
+              <h2 class="mb-0">₹{{ "%.2f"|format(budget_status.total) }}</h2>
             </div>
             <div class="col-md-3 text-center mb-3 mb-md-0">
               <h5 class="text-muted">Remaining</h5>
               <h2
                 class="mb-0 {% if budget_status.remaining < 0 %}text-danger{% endif %}"
               >
-                ${{ "%.2f"|format(budget_status.remaining) }}
+                ₹{{ "%.2f"|format(budget_status.remaining) }}
               </h2>
             </div>
             <div class="col-md-3">
@@ -152,7 +152,7 @@
                 {% for item in category_summary[:7] %}
                 <tr>
                   <td>{{ item.category|capitalize }}</td>
-                  <td>${{ "%.2f"|format(item.sum) }}</td>
+                  <td>₹{{ "%.2f"|format(item.sum) }}</td>
                   <td>
                     {{ "%.1f"|format((item.sum / total_expenses) * 100) }}%
                   </td>
@@ -161,7 +161,7 @@
                 <tr>
                   <td>Others</td>
                   <td>
-                    ${{ "%.2f"|format(category_summary[7:]|sum(attribute='sum'))
+                    ₹{{ "%.2f"|format(category_summary[7:]|sum(attribute='sum'))
                     }}
                   </td>
                   <td>
@@ -202,7 +202,7 @@
                     <small class="text-muted d-block">{{ item.date }}</small>
                     {{ item.description|truncate(20) }}
                   </td>
-                  <td>${{ "%.2f"|format(item.amount) }}</td>
+                  <td>₹{{ "%.2f"|format(item.amount) }}</td>
                   <td>{{ "%.1f"|format(item.times_above_avg) }}×</td>
                 </tr>
                 {% endfor %}
@@ -255,7 +255,7 @@
                               let value = context.parsed || 0;
                               let total = context.dataset.data.reduce((a, b) => a + b, 0);
                               let percentage = total > 0 ? Math.round((value / total) * 100) : 0;
-                              return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                              return `${label}: ₹${value.toFixed(2)} (${percentage}%)`;
                           }
                       }
                   }
@@ -287,7 +287,7 @@
                       beginAtZero: true,
                       ticks: {
                           callback: function(value) {
-                              return '$' + value.toFixed(0);
+                              return '₹' + value.toFixed(0);
                           }
                       }
                   }

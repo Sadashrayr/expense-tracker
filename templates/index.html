@@ -1,108 +1,164 @@
-{% extends "layout.html" %}
-
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="hero-section text-center mb-5">
-                <h1 class="display-4 mb-3">ExpenseLynx</h1>
-                <p class="lead">Track, analyze, and optimize your personal finances with ease</p>
-                <div class="hero-image my-4">
-                    <img src="{{ url_for('static', filename='images/hero-finance.svg') }}" alt="Financial tracking illustration" class="img-fluid">
-                </div>
-            </div>
-            
-            <div class="row features mb-5">
-                <div class="col-md-4 mb-4">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-chart-pie"></i>
-                        </div>
-                        <h3>Expense Categories</h3>
-                        <p>Automatically categorize your expenses for better tracking and analysis</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-search-dollar"></i>
-                        </div>
-                        <h3>Unusual Spending</h3>
-                        <p>Identify unusual expenses that exceed your typical spending patterns</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <h3>Monthly Trends</h3>
-                        <p>Visualize your spending trends over time with interactive charts</p>
-                    </div>
-                </div>
-            </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="hero-section text-center mb-5">
+        <h1 class="display-4 mb-3">ExpenseLynx</h1>
+        <p class="lead">
+          Track, analyze, and optimize your personal finances with ease
+        </p>
+      </div>
 
-            <div class="card upload-card mb-5">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Upload Your Expense Data</h2>
-                    
-                    <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" class="upload-form">
-                        <div class="mb-4">
-                            <label for="file" class="form-label">CSV File <span class="text-muted">(required)</span></label>
-                            <div class="input-group">
-                                <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
-                                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#csvHelp">
-                                    <i class="fas fa-info-circle"></i>
-                                </button>
-                            </div>
-                            <div class="collapse mt-2" id="csvHelp">
-                                <div class="card card-body bg-light">
-                                    <p class="mb-1">Your CSV file should have these columns:</p>
-                                    <ul class="mb-0">
-                                        <li><strong>date:</strong> Transaction date (YYYY-MM-DD)</li>
-                                        <li><strong>amount:</strong> Transaction amount</li>
-                                        <li><strong>description:</strong> Transaction description</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="budget" class="form-label">Monthly Budget <span class="text-muted">(optional)</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="budget" name="budget" placeholder="Enter your monthly budget">
-                                </div>
-                                <small class="form-text text-muted">We'll compare your spending against this budget</small>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="custom_categories" class="form-label">Custom Categories <span class="text-muted">(optional)</span></label>
-                                <textarea class="form-control" id="custom_categories" name="custom_categories" rows="3" placeholder="subscriptions: netflix, hulu, spotify&#10;fitness: gym, workout, trainer"></textarea>
-                                <small class="form-text text-muted">Format: category: keyword1, keyword2</small>
-                            </div>
-                        </div>
-
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-lg btn-primary">
-                                <i class="fas fa-upload me-2"></i>Upload and Analyze
-                            </button>
-                        </div>
-                    </form>
-                </div>
+      <div class="row features mb-5">
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-chart-pie"></i>
             </div>
-
-            <div class="sample-data-card">
-                <h3 class="text-center mb-3">Don't have data yet?</h3>
-                <p class="text-center mb-4">Download our sample CSV to see how ExpenseLynx works:</p>
-                <div class="text-center">
-                    <a href="{{ url_for('static', filename='sample/sample_expenses.csv') }}" download class="btn btn-outline-primary">
-                        <i class="fas fa-download me-2"></i>Download Sample Data
-                    </a>
-                </div>
-            </div>
+            <h3>Expense Categories</h3>
+            <p>
+              Automatically categorize your expenses for better tracking and
+              analysis
+            </p>
+          </div>
         </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-search-dollar"></i>
+            </div>
+            <h3>Unusual Spending</h3>
+            <p>
+              Identify unusual expenses that exceed your typical spending
+              patterns
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>Monthly Trends</h3>
+            <p>
+              Visualize your spending trends over time with interactive charts
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card upload-card mb-5">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">Upload Your Expense Data</h2>
+
+          <form
+            action="{{ url_for('upload_file') }}"
+            method="post"
+            enctype="multipart/form-data"
+            class="upload-form"
+          >
+            <div class="mb-4">
+              <label for="file" class="form-label"
+                >CSV File <span class="text-muted">(required)</span></label
+              >
+              <div class="input-group">
+                <input
+                  type="file"
+                  class="form-control"
+                  id="file"
+                  name="file"
+                  accept=".csv"
+                  required
+                />
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#csvHelp"
+                >
+                  <i class="fas fa-info-circle"></i>
+                </button>
+              </div>
+              <div class="collapse mt-2" id="csvHelp">
+                <div class="card card-body bg-light">
+                  <p class="mb-1">Your CSV file should have these columns:</p>
+                  <ul class="mb-0">
+                    <li>
+                      <strong>date:</strong> Transaction date (YYYY-MM-DD)
+                    </li>
+                    <li><strong>amount:</strong> Transaction amount</li>
+                    <li>
+                      <strong>description:</strong> Transaction description
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="budget" class="form-label"
+                  >Monthly Budget
+                  <span class="text-muted">(optional)</span></label
+                >
+                <div class="input-group">
+                  <span class="input-group-text">₹</span>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="budget"
+                    name="budget"
+                    placeholder="Enter your monthly budget"
+                  />
+                </div>
+                <small class="form-text text-muted"
+                  >We'll compare your spending against this budget</small
+                >
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="custom_categories" class="form-label"
+                  >Custom Categories
+                  <span class="text-muted">(optional)</span></label
+                >
+                <textarea
+                  class="form-control"
+                  id="custom_categories"
+                  name="custom_categories"
+                  rows="3"
+                  placeholder="subscriptions: netflix, hulu, spotify&#10;fitness: gym, workout, trainer"
+                ></textarea>
+                <small class="form-text text-muted"
+                  >Format: category: keyword1, keyword2</small
+                >
+              </div>
+            </div>
+
+            <div class="text-center">
+              <button type="submit" class="btn btn-lg btn-primary">
+                <i class="fas fa-upload me-2"></i>Upload and Analyze
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="sample-data-card">
+        <h3 class="text-center mb-3">Don't have data yet?</h3>
+        <p class="text-center mb-4">
+          Download our sample CSV to see how ExpenseLynx works:
+        </p>
+        <div class="text-center">
+          <a
+            href="{{ url_for('static', filename='sample/sample_expenses.csv') }}"
+            download
+            class="btn btn-outline-primary"
+          >
+            <i class="fas fa-download me-2"></i>Download Sample Data
+          </a>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}
