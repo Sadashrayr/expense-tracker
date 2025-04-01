@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker Dashboard</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Expense Tracker Dashboard</h1>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="upload-section">
+            <h2>Upload Your Expense Data</h2>
+            <p>Upload a CSV file with your expense data to start tracking and analyzing your spending.</p>
+            
+            <div class="file-upload" id="drop-area">
+                <img src="/api/placeholder/64/64" alt="Upload icon" width="64" height="64">
+                <p>Drag and drop your CSV file here or click to browse</p>
+                <input type="file" id="file-input" accept=".csv">
+                <button class="file-upload-btn" id="browse-btn">Browse Files</button>
+            </div>
+            
+            <div class="loader" id="loader"></div>
+            <div id="file-info"></div>
+        </div>
+        
+        <div class="dashboard" id="dashboard">
+            <div class="summary-cards">
+                <div class="card">
+                    <h3>Total Expenses</h3>
+                    <div class="value" id="total-expenses">$0.00</div>
+                </div>
+                <div class="card">
+                    <h3>Average Monthly Expenses</h3>
+                    <div class="value" id="avg-monthly">$0.00</div>
+                </div>
+                <div class="card">
+                    <h3>Top Spending Category</h3>
+                    <div class="value" id="top-category">-</div>
+                </div>
+                <div class="card">
+                    <h3>Total Transactions</h3>
+                    <div class="value" id="total-transactions">0</div>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="overview">Overview</div>
+                <div class="tab" data-tab="categories">Categories</div>
+                <div class="tab" data-tab="monthly">Monthly Trend</div>
+                <div class="tab" data-tab="transactions">Transactions</div>
+            </div>
+            
+            <div class="tab-content active" id="overview-tab">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Expense Distribution</h3>
+                    </div>
+                    <canvas id="overview-chart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Recent Spending Trend</h3>
+                    </div>
+                    <canvas id="recent-trend-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="categories-tab">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Expenses by Category</h3>
+                    </div>
+                    <canvas id="category-chart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Category Breakdown</h3>
+                    </div>
+                    <table class="expense-table" id="category-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Total Amount</th>
+                                <th>Transactions</th>
+                                <th>Average Amount</th>
+                                <th>% of Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Will be filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="monthly-tab">
+                <div class="filter-section">
+                    <select id="year-filter">
+                        <option value="all">All Years</option>
+                        <!-- Will be filled by JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Monthly Expense Trend</h3>
+                    </div>
+                    <canvas id="monthly-chart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Monthly Category Split</h3>
+                    </div>
+                    <canvas id="monthly-category-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="transactions-tab">
+                <div class="filter-section">
+                    <select id="category-filter">
+                        <option value="all">All Categories</option>
+                        <!-- Will be filled by JavaScript -->
+                    </select>
+                    
+                    <input type="text" id="search-input" placeholder="Search descriptions...">
+                    
+                    <button id="show-unusual-btn">Show Unusual Expenses</button>
+                    
+                    <button id="reset-filters-btn" class="btn-secondary">Reset Filters</button>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Transaction List</h3>
+                    </div>
+                    <table class="expense-table" id="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Category</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Will be filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript Files -->
+    <script src="static/constants.js"></script>
+    <script src="static/helper.js"></script>
+    <script src="static/charts.js"></script>
+    <script src="static/main.js"></script>
+</body>
+</html>

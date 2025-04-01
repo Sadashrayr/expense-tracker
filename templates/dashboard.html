@@ -1,0 +1,310 @@
+{% extends "layout.html" %} {% block head %}
+<style>
+  .dashboard-card {
+    transition: transform 0.2s;
+    height: 100%;
+  }
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  .card-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+  }
+  .status-indicator {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+  .status-good {
+    background-color: #28a745;
+  }
+  .status-warning {
+    background-color: #ffc107;
+  }
+  .status-danger {
+    background-color: #dc3545;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container">
+  <div class="dashboard-header mb-4">
+    <h1 class="display-5 mb-3">Your Financial Dashboard</h1>
+    <div class="date-range text-muted">
+      <i class="far fa-calendar-alt me-2"></i>Analysis based on your uploaded
+      data
+    </div>
+  </div>
+
+  <!-- Budget Overview Card -->
+  {% if budget_status %}
+  <div class="row mb-4">
+    <div class="col-lg-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-3 text-center text-md-start mb-3 mb-md-0">
+              <h5 class="text-muted">Monthly Budget</h5>
+              <h2 class="mb-0">${{ "%.2f"|format(budget_status.budget) }}</h2>
+            </div>
+            <div class="col-md-3 text-center mb-3 mb-md-0">
+              <h5 class="text-muted">Total Expenses</h5>
+              <h2 class="mb-0">${{ "%.2f"|format(budget_status.total) }}</h2>
+            </div>
+            <div class="col-md-3 text-center mb-3 mb-md-0">
+              <h5 class="text-muted">Remaining</h5>
+              <h2
+                class="mb-0 {% if budget_status.remaining < 0 %}text-danger{% endif %}"
+              >
+                ${{ "%.2f"|format(budget_status.remaining) }}
+              </h2>
+            </div>
+            <div class="col-md-3">
+              <h5 class="text-muted mb-2">Budget Usage</h5>
+              <div class="progress" style="height: 25px">
+                {% set progress_percent = budget_status.percentage %} {% if
+                progress_percent > 100 %} {% set progress_percent = 100 %} {%
+                endif %}
+                <div
+                  class="progress-bar {% if budget_status.percentage > 100 %}bg-danger{% elif budget_status.percentage > 80 %}bg-warning{% else %}bg-success{% endif %}"
+                  role="progressbar"
+                  style="width: {{ progress_percent }}%;"
+                  aria-valuenow="{{ budget_status.percentage }}"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                >
+                  {{ "%.1f"|format(budget_status.percentage) }}%
+                </div>
+              </div>
+              <p class="mt-2 mb-0 text-center">
+                {% if budget_status.percentage > 100 %}
+                <span class="badge bg-danger">Over Budget!</span>
+                {% elif budget_status.percentage > 80 %}
+                <span class="badge bg-warning text-dark">Getting Close!</span>
+                {% else %}
+                <span class="badge bg-success">On Track</span>
+                {% endif %}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Main Dashboard -->
+  <div class="row mb-4">
+    <!-- Left Column: Charts -->
+    <div class="col-lg-8 mb-4 mb-lg-0">
+      <div class="row">
+        <!-- Category Chart -->
+        <div class="col-md-12 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+              <h5 class="mb-0">Expenses by Category</h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="categoryChart" width="400" height="300"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly Trend Chart -->
+        <div class="col-md-12">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+              <h5 class="mb-0">Monthly Spending Trend</h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="trendsChart" width="400" height="300"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Summary & Unusual Expenses -->
+    <div class="col-lg-4">
+      <!-- Category Summary -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Category Summary</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Amount</th>
+                  <th>%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in category_summary[:7] %}
+                <tr>
+                  <td>{{ item.category|capitalize }}</td>
+                  <td>${{ "%.2f"|format(item.sum) }}</td>
+                  <td>
+                    {{ "%.1f"|format((item.sum / total_expenses) * 100) }}%
+                  </td>
+                </tr>
+                {% endfor %} {% if category_summary|length > 7 %}
+                <tr>
+                  <td>Others</td>
+                  <td>
+                    ${{ "%.2f"|format(category_summary[7:]|sum(attribute='sum'))
+                    }}
+                  </td>
+                  <td>
+                    {{ "%.1f"|format((category_summary[7:]|sum(attribute='sum')
+                    / total_expenses) * 100) }}%
+                  </td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unusual Expenses -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">
+            <i class="fas fa-exclamation-triangle text-warning me-2"></i>Unusual
+            Expenses
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          {% if unusual_expenses %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>×Avg</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in unusual_expenses[:5] %}
+                <tr>
+                  <td>
+                    <small class="text-muted d-block">{{ item.date }}</small>
+                    {{ item.description|truncate(20) }}
+                  </td>
+                  <td>${{ "%.2f"|format(item.amount) }}</td>
+                  <td>{{ "%.1f"|format(item.times_above_avg) }}×</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="p-4 text-center">
+            <p class="text-muted">No unusual expenses detected</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      // Setup colors
+      const colors = [
+          '#4361ee', '#3a0ca3', '#7209b7', '#f72585', '#4cc9f0',
+          '#4895ef', '#560bad', '#f15bb5', '#00bbf9', '#00f5d4',
+          '#ff9e00', '#ff0054', '#390099', '#ffbd00', '#ff99c8'
+      ];
+
+      // Category Chart
+      const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+      const categoryChart = new Chart(ctxCategory, {
+          type: 'doughnut',
+          data: {
+              labels: {{ category_chart.labels|tojson }},
+              datasets: [{
+                data: {{ category_chart["values"]|tojson }},
+                  backgroundColor: colors,
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                  legend: {
+                      position: 'right',
+                  },
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              let label = context.label || '';
+                              let value = context.parsed || 0;
+                              let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                              let percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                              return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                          }
+                      }
+                  }
+              }
+          }
+      });
+
+      // Monthly Trend Chart
+      const ctxTrend = document.getElementById('trendsChart').getContext('2d');
+      const trendsChart = new Chart(ctxTrend, {
+          type: 'line',
+          data: {
+              labels: {{ monthly_trend.labels|tojson }},
+              datasets: [{
+                  label: 'Monthly Expenses',
+                  data: {{ monthly_trend["values"]|tojson }},
+                  backgroundColor: 'rgba(67, 97, 238, 0.2)',
+                  borderColor: 'rgba(67, 97, 238, 1)',
+                  borderWidth: 2,
+                  tension: 0.3,
+                  fill: true
+              }]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      ticks: {
+                          callback: function(value) {
+                              return '$' + value.toFixed(0);
+                          }
+                      }
+                  }
+              },
+              plugins: {
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              let label = context.dataset.label || '';
+                              let value = context.parsed.y || 0;
+                              return `${label}: $${value.toFixed(2)}`;
+                          }
+                      }
+                  }
+              }
+          }
+      });
+  });
+</script>
+{% endblock %}
