@@ -1,7 +1,5 @@
+from expense_tracker import ExpenseTracker
 import os
-import pandas as pd
-import io
-import base64
 from flask import (
     Flask,
     render_template,
@@ -10,18 +8,14 @@ from flask import (
     url_for,
     session,
     flash,
-    jsonify,
 )
 from werkzeug.utils import secure_filename
 import matplotlib
 
 matplotlib.use("Agg")  # Use non-interactive backend
-import matplotlib.pyplot as plt
-from datetime import datetime
-from expense_tracker import ExpenseTracker
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key_here"  # Change this to a random secret key
+app.secret_key = "s3cr3t"  # Change this to a random secret key
 app.config["UPLOAD_FOLDER"] = "uploads"
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB max upload
 app.config["ALLOWED_EXTENSIONS"] = {"csv"}
@@ -83,7 +77,8 @@ def upload_file():
                 if custom_categories:
                     tracker.add_custom_category_rules(custom_categories)
             except Exception as e:
-                flash(f"Error processing custom categories: {str(e)}", "warning")
+                flash(
+                    f"Error processing custom categories: {str(e)}", "warning")
 
         # Categorize expenses
         tracker.categorize_expenses()
@@ -99,13 +94,16 @@ def upload_file():
 
         # Convert DataFrames to lists for JSON serialization
         session["category_summary"] = (
-            category_summary.to_dict("records") if category_summary is not None else []
+            category_summary.to_dict(
+                "records") if category_summary is not None else []
         )
         session["monthly_summary"] = (
-            monthly_summary.to_dict("records") if monthly_summary is not None else []
+            monthly_summary.to_dict(
+                "records") if monthly_summary is not None else []
         )
         session["unusual_expenses"] = (
-            unusual_expenses.to_dict("records") if unusual_expenses is not None else []
+            unusual_expenses.to_dict(
+                "records") if unusual_expenses is not None else []
         )
 
         # Generate and save charts
@@ -189,8 +187,10 @@ def dashboard():
         budget_status=budget_status,
         monthly_trend=monthly_trend,
         category_chart={
-            "labels": list(category_chart["labels"]),  # Access using dictionary keys
-            "values": list(category_chart["values"]),  # Access using dictionary keys
+            # Access using dictionary keys
+            "labels": list(category_chart["labels"]),
+            # Access using dictionary keys
+            "values": list(category_chart["values"]),
         },
         charts_generated=session.get("charts_generated", False),
     )
